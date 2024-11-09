@@ -14,12 +14,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
+@CrossOrigin
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody UserRegistrationDTO registrationDTO) {
-        User user = userService.registerUser(registrationDTO);
+    @PostMapping("/update/{id}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id,@RequestBody UserRegistrationDTO registrationDTO) {
+        User user = userService.updateUser(id,registrationDTO);
         return ResponseEntity.ok(new UserDTO(user));
     }
 
@@ -31,6 +32,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
+        System.out.println("Inside GET");
         List<UserDTO> users = userService.getAllUsers()
                 .stream()
                 .map(UserDTO::new)
