@@ -13,13 +13,16 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"user", "comments", "reactions"})
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String imageUrl;
+    @Lob
+    @Column(length = 1000000)
+    private byte[] imageData;
+
+    private String imageType;
     private String caption;
 
     @Column(nullable = false)

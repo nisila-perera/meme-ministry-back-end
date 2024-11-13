@@ -2,14 +2,15 @@ package com.webdesk.controller;
 
 import com.webdesk.dto.UserDTO;
 import com.webdesk.dto.UserRegistrationDTO;
-import com.webdesk.entity.User;
 import com.webdesk.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -18,25 +19,45 @@ import java.util.stream.Collectors;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/update/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id,@RequestBody UserRegistrationDTO registrationDTO) {
-        User user = userService.updateUser(id,registrationDTO);
-        return ResponseEntity.ok(new UserDTO(user));
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserRegistrationDTO registrationDTO) {
+        try {
+            UserDTO updatedUser = userService.updateUser(id, registrationDTO);
+            return ResponseEntity.ok(updatedUser);
+        } catch (RuntimeException e) {
+            return createErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
-        User user = userService.getUser(id);
-        return ResponseEntity.ok(new UserDTO(user));
+    public ResponseEntity<?> getUser(@PathVariable Long id) {
+        try {
+            UserDTO user = userService.getUser(id);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return createErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
-        System.out.println("Inside GET");
-        List<UserDTO> users = userService.getAllUsers()
-                .stream()
-                .map(UserDTO::new)
-                .collect(Collectors.toList());
+        List<UserDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username) {
+        try {
+            UserDTO user = userService.findByUsername(username);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return createErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    private ResponseEntity<?> createErrorResponse(String message, HttpStatus status) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", message);
+        return new ResponseEntity<>(response, status);
     }
 }

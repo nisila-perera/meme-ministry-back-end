@@ -12,4 +12,8 @@ public class UserRegistrationDTO {
     private String password;
     private String email;
     private String bio;
+    private byte[] profilePictureData;
+    private String profilePictureType;
+    private byte[] coverPictureData;
+    private String coverPictureType;
 }

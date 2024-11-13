@@ -5,63 +5,58 @@ import com.webdesk.entity.User;
 import com.webdesk.repository.PostRepository;
 import com.webdesk.repository.UserRepository;
 import com.webdesk.service.PostService;
+import com.webdesk.util.FileUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
+    @Override
     public Post createPost(MultipartFile image, String caption, Long userId) throws IOException {
-        // Validate user
+        // Validate input
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("Image file is required");
+        }
+
+        // Find user
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        // Handle file upload
-        String fileName = StringUtils.cleanPath(image.getOriginalFilename());
-        String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
-        String uploadDir = "uploads/";
-        Path uploadPath = Paths.get(uploadDir);
-
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
+        // Validate file type
+        String contentType = image.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("File must be an image");
         }
 
-        // Save the file
-        try (InputStream inputStream = image.getInputStream()) {
-            Path filePath = uploadPath.resolve(uniqueFileName);
-            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-        }
-
-        // Create and save post
+        // Create new post
         Post post = new Post();
-        post.setImageUrl("/uploads/" + uniqueFileName);
+        post.setImageData(FileUtils.compressImage(image.getBytes()));
+        post.setImageType(contentType);
         post.setCaption(caption);
-        post.setUser(user);
         post.setCreatedAt(LocalDateTime.now());
+        post.setUser(user);
 
         return postRepository.save(post);
     }
 
+    @Override
     public Optional<Post> getPost(Long id) {
         return postRepository.findById(id);
     }
 
+    @Override
     public List<Post> getUserPosts(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new RuntimeException("User not found with id: " + userId);
@@ -69,19 +64,40 @@ public class PostServiceImpl implements PostService {
         return postRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
+    @Override
     public void deletePost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
 
-        // Delete the image file
-        try {
-            Path imagePath = Paths.get("." + post.getImageUrl());
-            Files.deleteIfExists(imagePath);
-        } catch (IOException e) {
-            // Log the error but continue with database deletion
-            System.err.println("Could not delete image file: " + e.getMessage());
+        postRepository.delete(post);
+    }
+
+    // Add method to get decompressed image data
+    public byte[] getPostImage(Long postId) throws IOException {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
+
+        return post.getImageData() != null ? FileUtils.decompressImage(post.getImageData()) : null;
+    }
+
+    // Add method to update post
+    public Post updatePost(Long postId, MultipartFile newImage, String newCaption) throws IOException {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
+
+        if (newImage != null && !newImage.isEmpty()) {
+            String contentType = newImage.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new IllegalArgumentException("File must be an image");
+            }
+            post.setImageData(FileUtils.compressImage(newImage.getBytes()));
+            post.setImageType(contentType);
         }
 
-        postRepository.delete(post);
+        if (newCaption != null) {
+            post.setCaption(newCaption);
+        }
+
+        return postRepository.save(post);
     }
 }

@@ -14,7 +14,10 @@ public class UserDTO {
     private String password;
     private String email;
     private String bio;
-    private String profilePicture;
+    private byte[] profilePictureData;
+    private String profilePictureType;
+    private byte[] coverPictureData;
+    private String coverPictureType;
     private int postCount;
     private int followerCount;
     private int followingCount;
@@ -25,7 +28,10 @@ public class UserDTO {
         this.password = user.getPassword();
         this.email = user.getEmail();
         this.bio = user.getBio();
-        this.profilePicture = user.getProfilePicture();
+        this.profilePictureData = user.getProfilePictureData();
+        this.profilePictureType = user.getProfilePictureType();
+        this.coverPictureData = user.getCoverPictureData();
+        this.coverPictureType = user.getCoverPictureType();
         this.postCount = user.getPosts() != null ? user.getPosts().size() : 0;
         this.followerCount = user.getFollowers() != null ? user.getFollowers().size() : 0;
         this.followingCount = user.getFollowing() != null ? user.getFollowing().size() : 0;

@@ -26,7 +26,18 @@ public class User {
     private String password;
     private String email;
     private String bio;
-    private String profilePicture;
+
+    @Lob
+    @Column(name = "profile_picture_data", columnDefinition = "LONGBLOB")
+    private byte[] profilePictureData;
+
+    private String profilePictureType;
+
+    @Lob
+    @Column(name = "cover_picture_data", columnDefinition = "LONGBLOB")
+    private byte[] coverPictureData;
+
+    private String coverPictureType;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Post> posts = new ArrayList<>();

@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @CrossOrigin
@@ -22,7 +25,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody UserRegistrationDTO registrationDTO) {
-        return new ResponseEntity<>(userService.registerUser(registrationDTO), HttpStatus.CREATED);
+    public ResponseEntity<UserDTO> registerUser(@RequestPart UserRegistrationDTO registrationDTO,
+                                                @RequestPart MultipartFile profilePicture,
+                                                @RequestPart MultipartFile coverPicture) throws IOException {
+        return new ResponseEntity<>(userService.registerUser(registrationDTO, profilePicture, coverPicture), HttpStatus.CREATED);
     }
 }

@@ -13,12 +13,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.Instant;
+import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
     private final ModelMapper mapper;
     private final UserRepository userRepository;
@@ -26,55 +30,92 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JWTService jwtService;
 
-    public UserDTO registerUser(UserRegistrationDTO registrationDTO) {
-        if (userRepository.findByUsername(registrationDTO.getUsername()).isPresent()) {
-            throw new RuntimeException("Username already exists");
-        }
 
-        registrationDTO.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
-        registrationDTO.setUsername(registrationDTO.getUsername());
-        registrationDTO.setBio(registrationDTO.getBio());
-        registrationDTO.setEmail(registrationDTO.getEmail());
-        User user = userRepository.save(mapper.map(registrationDTO, User.class));
-        return mapper.map(user, UserDTO.class);
-    }
+    @Override
+    public UserDTO registerUser(UserRegistrationDTO registrationDTO, MultipartFile profilePicture, MultipartFile coverPicture) throws IOException {
+        userRepository.findByUsername(registrationDTO.getUsername())
+                .ifPresent(user -> {
+                    throw new RuntimeException("Username already exists");
+                });
 
-    public User updateUser(Long id, UserRegistrationDTO registrationDTO) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        User user = new User();
         user.setUsername(registrationDTO.getUsername());
-        user.setPassword(registrationDTO.getPassword());
+        user.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
         user.setEmail(registrationDTO.getEmail());
         user.setBio(registrationDTO.getBio());
+        user.setProfilePictureData(profilePicture.getBytes());
+        user.setProfilePictureType(profilePicture.getContentType());
+        user.setCoverPictureData(coverPicture.getBytes());
+        user.setCoverPictureType(coverPicture.getContentType());
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        return new UserDTO(savedUser);
     }
 
-    public UserDTO findByUsername(String username){
-        return new UserDTO(userRepository.findByUsername(username).get());
-    }
-
-    public User getUser(Long id) {
-        return userRepository.findById(id)
+    @Override
+    @Transactional
+    public UserDTO updateUser(Long id, UserRegistrationDTO registrationDTO) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+        if (!user.getUsername().equals(registrationDTO.getUsername())) {
+            userRepository.findByUsername(registrationDTO.getUsername())
+                    .ifPresent(existingUser -> {
+                        throw new RuntimeException("Username already taken");
+                    });
+            user.setUsername(registrationDTO.getUsername());
+        }
+
+        if (registrationDTO.getPassword() != null) {
+            user.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
+        }
+
+        user.setEmail(registrationDTO.getEmail());
+        user.setBio(registrationDTO.getBio());
+        user.setProfilePictureData(registrationDTO.getProfilePictureData());
+        user.setProfilePictureType(registrationDTO.getProfilePictureType());
+        user.setCoverPictureData(registrationDTO.getCoverPictureData());
+        user.setCoverPictureType(registrationDTO.getCoverPictureType());
+
+        User updatedUser = userRepository.save(user);
+        return new UserDTO(updatedUser);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    @Override
+    public UserDTO findByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+        return new UserDTO(user);
+    }
+
+    @Override
+    public UserDTO getUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        return new UserDTO(user);
+    }
+
+    @Override
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(UserDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
     public JwtResponseDTO verify(UserDTO userDTO) {
-        Authentication authentication= authManager.authenticate(
+        Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         userDTO.getUsername(),
                         userDTO.getPassword()
                 )
         );
+
         if (authentication.isAuthenticated()) {
             String token = jwtService.generateToken(userDTO.getUsername());
             UserDTO user = findByUsername(userDTO.getUsername());
             return new JwtResponseDTO(token, user);
         }
-        throw new RuntimeException("Invalid access");
+        throw new RuntimeException("Invalid credentials");
     }
 }
