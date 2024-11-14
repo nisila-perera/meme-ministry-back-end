@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface UserService {
     UserDTO registerUser(UserRegistrationDTO registrationDTO, MultipartFile profilePicture, MultipartFile coverPicture) throws IOException;
-    UserDTO updateUser(Long id, UserRegistrationDTO registrationDTO);
+    UserDTO updateUser(Long id, UserRegistrationDTO registrationDTO, MultipartFile profilePicture, MultipartFile coverPicture) throws IOException;
     UserDTO findByUsername(String username);
     UserDTO getUser(Long id);
     List<UserDTO> getAllUsers();

@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,11 +22,14 @@ public class UserController {
     private final UserService userService;
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserRegistrationDTO registrationDTO) {
+    public ResponseEntity<?> updateUser(@PathVariable Long id,
+                                        @RequestPart UserRegistrationDTO registrationDTO,
+                                        @RequestPart MultipartFile profilePicture,
+                                        @RequestPart MultipartFile coverPicture) {
         try {
-            UserDTO updatedUser = userService.updateUser(id, registrationDTO);
+            UserDTO updatedUser = userService.updateUser(id, registrationDTO, profilePicture, coverPicture);
             return ResponseEntity.ok(updatedUser);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | IOException e) {
             return createErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

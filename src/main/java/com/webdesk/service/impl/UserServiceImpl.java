@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO updateUser(Long id, UserRegistrationDTO registrationDTO) {
+    public UserDTO updateUser(Long id, UserRegistrationDTO registrationDTO, MultipartFile profilePicture, MultipartFile coverPicture) throws IOException {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
@@ -72,10 +72,10 @@ public class UserServiceImpl implements UserService {
 
         user.setEmail(registrationDTO.getEmail());
         user.setBio(registrationDTO.getBio());
-        user.setProfilePictureData(registrationDTO.getProfilePictureData());
-        user.setProfilePictureType(registrationDTO.getProfilePictureType());
-        user.setCoverPictureData(registrationDTO.getCoverPictureData());
-        user.setCoverPictureType(registrationDTO.getCoverPictureType());
+        user.setProfilePictureData(profilePicture.getBytes());
+        user.setProfilePictureType(profilePicture.getContentType());
+        user.setCoverPictureData(coverPicture.getBytes());
+        user.setCoverPictureType(coverPicture.getContentType());
 
         User updatedUser = userRepository.save(user);
         return new UserDTO(updatedUser);

@@ -15,7 +15,7 @@ import java.util.Base64;
 @AllArgsConstructor
 public class PostDTO {
     private Long id;
-    private String imageBase64;
+    private byte[] imageData;
     private String imageType;
     private String caption;
     private LocalDateTime createdAt;
@@ -25,14 +25,7 @@ public class PostDTO {
 
     public PostDTO(Post post) {
         this.id = post.getId();
-        if (post.getImageData() != null) {
-            try {
-                byte[] decompressedImage = FileUtils.decompressImage(post.getImageData());
-                this.imageBase64 = Base64.getEncoder().encodeToString(decompressedImage);
-            } catch (IOException e) {
-                //handle exception
-            }
-        }
+        this.imageData = post.getImageData();
         this.imageType = post.getImageType();
         this.caption = post.getCaption();
         this.createdAt = post.getCreatedAt();

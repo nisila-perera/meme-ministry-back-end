@@ -27,6 +27,7 @@ public class PostController {
             @RequestParam("image") MultipartFile image,
             @RequestParam("caption") String caption,
             @RequestParam("userId") Long userId) {
+        System.out.println("Received");
         try {
             Post createdPost = postService.createPost(image, caption, userId);
             return ResponseEntity.ok(new PostDTO(createdPost));
