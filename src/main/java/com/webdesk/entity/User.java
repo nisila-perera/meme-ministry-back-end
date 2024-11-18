@@ -1,9 +1,7 @@
 package com.webdesk.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,7 +10,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -52,4 +51,14 @@ public class User {
 
     @ManyToMany(mappedBy = "followers")
     private Set<User> following = new HashSet<>();
+
+    public void follow(User userToFollow) {
+        userToFollow.getFollowers().add(this);
+        this.getFollowing().add(userToFollow);
+    }
+
+    public void unfollow(User userToUnfollow) {
+        userToUnfollow.getFollowers().remove(this);
+        this.getFollowing().remove(userToUnfollow);
+    }
 }

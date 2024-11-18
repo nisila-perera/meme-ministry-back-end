@@ -14,6 +14,10 @@ public interface UserService {
     UserDTO findByUsername(String username);
     UserDTO getUser(Long id);
     List<UserDTO> getAllUsers();
+    void followUser(Long followerId, Long followingId);
+    void unfollowUser(Long followerId, Long followingId);
+    List<UserDTO> getFollowers(Long userId);
+    List<UserDTO> getFollowing(Long userId);
     JwtResponseDTO verify(UserDTO userDTO);
     JwtResponseDTO verifyAndRefreshToken(String token);
 }

@@ -1,11 +1,15 @@
 package com.webdesk.controller;
 
 import com.webdesk.dto.UserDTO;
+import com.webdesk.dto.UserPrincipal;
 import com.webdesk.dto.UserRegistrationDTO;
+import com.webdesk.entity.User;
 import com.webdesk.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,6 +70,51 @@ public class UserController {
             return createErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
+    @PostMapping("/{userId}/follow")
+    public ResponseEntity<?> followUser(
+            @PathVariable Long userId,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        try {
+            userService.followUser(userPrincipal.getId(), userId);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return createErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/{userId}/unfollow")
+    public ResponseEntity<?> unfollowUser(
+            @PathVariable Long userId,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        try {
+            userService.unfollowUser(userPrincipal.getId(), userId);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return createErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/{userId}/followers")
+    public ResponseEntity<?> getFollowers(@PathVariable Long userId) {
+        try {
+            List<UserDTO> followers = userService.getFollowers(userId);
+            return ResponseEntity.ok(followers);
+        } catch (RuntimeException e) {
+            return createErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/{userId}/following")
+    public ResponseEntity<?> getFollowing(@PathVariable Long userId) {
+        try {
+            List<UserDTO> following = userService.getFollowing(userId);
+            return ResponseEntity.ok(following);
+        } catch (RuntimeException e) {
+            return createErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
 
     private ResponseEntity<?> createErrorResponse(String message, HttpStatus status) {
         Map<String, String> response = new HashMap<>();

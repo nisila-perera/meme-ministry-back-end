@@ -112,6 +112,71 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public void followUser(Long followerId, Long followingId) {
+        if (followerId.equals(followingId)) {
+            throw new RuntimeException("Users cannot follow themselves");
+        }
+
+        User follower = userRepository.findById(followerId)
+                .orElseThrow(() -> new RuntimeException("Follower not found"));
+        User following = userRepository.findById(followingId)
+                .orElseThrow(() -> new RuntimeException("User to follow not found"));
+
+        if (following.getFollowers().contains(follower)) {
+            throw new RuntimeException("Already following this user");
+        }
+
+        follower.follow(following);
+        userRepository.save(follower);
+        userRepository.save(following);
+    }
+
+    @Override
+    @Transactional
+    public void unfollowUser(Long followerId, Long followingId) {
+        User follower = userRepository.findById(followerId)
+                .orElseThrow(() -> new RuntimeException("Follower not found"));
+        User following = userRepository.findById(followingId)
+                .orElseThrow(() -> new RuntimeException("User to unfollow not found"));
+
+        if (!following.getFollowers().contains(follower)) {
+            throw new RuntimeException("Not following this user");
+        }
+
+        follower.unfollow(following);
+        userRepository.save(follower);
+        userRepository.save(following);
+    }
+
+    @Override
+    public List<UserDTO> getFollowers(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        System.out.print("Found {"+ user.getFollowers().size() +"} followers for user {"+userId+"}");
+
+        return user.getFollowers().stream()
+                .map(UserDTO::new)
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<UserDTO> getFollowing(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.getFollowing().size();
+
+        System.out.print("Found {"+ user.getFollowing().size() +"} following for user {"+userId+"}");
+
+        return user.getFollowing().stream()
+                .map(UserDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public JwtResponseDTO verify(UserDTO userDTO) {
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -142,7 +207,6 @@ public class UserServiceImpl implements UserService {
             }
 
             if (jwtService.shouldRefreshToken(token)) {
-                // Generate new token
                 String newToken = jwtService.generateToken(username);
                 return new JwtResponseDTO(newToken, userDTO);
             }

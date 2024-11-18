@@ -4,15 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9204ecd7-e16e-46a0-bbb9-2bc81a7eb31f" name="Changes" comment="Fixed storing profile picture and cover picture in database">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/exception/UnauthorizedException.java" afterDir="false" />
+    <list default="true" id="9204ecd7-e16e-46a0-bbb9-2bc81a7eb31f" name="Changes" comment="Fixed few bugs">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/controller/AuthController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/dto/PostDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/dto/PostDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/dto/UserPrincipal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/dto/UserPrincipal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/entity/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/service/impl/JWTService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/service/impl/JWTService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/service/impl/PostServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/service/impl/PostServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/service/impl/UserServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -119,7 +116,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731477502527</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Fixed few bugs">
+      <option name="closed" value="true" />
+      <created>1731907768787</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1731907768787</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -127,6 +132,7 @@
     <MESSAGE value="initial" />
     <MESSAGE value="Integrated jwt" />
     <MESSAGE value="Fixed storing profile picture and cover picture in database" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed storing profile picture and cover picture in database" />
+    <MESSAGE value="Fixed few bugs" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed few bugs" />
   </component>
 </project>
