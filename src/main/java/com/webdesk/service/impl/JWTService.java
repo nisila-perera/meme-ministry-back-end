@@ -78,4 +78,29 @@ public class JWTService {
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser()
+                    .verifyWith(getKey())
+                    .build()
+                    .parseSignedClaims(token);
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean shouldRefreshToken(String token) {
+        try {
+            Date expiration = extractExpiration(token);
+            return expiration.getTime() - System.currentTimeMillis() < 30 * 60 * 1000;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String extractUsername(String token) {
+        return extractUserName(token); // Using your existing method
+    }
 }

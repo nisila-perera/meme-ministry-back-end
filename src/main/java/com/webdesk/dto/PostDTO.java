@@ -1,14 +1,10 @@
 package com.webdesk.dto;
 
 import com.webdesk.entity.Post;
-import com.webdesk.util.FileUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Base64;
 
 @Data
 @NoArgsConstructor

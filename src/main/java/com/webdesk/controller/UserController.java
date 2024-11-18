@@ -4,6 +4,7 @@ import com.webdesk.dto.UserDTO;
 import com.webdesk.dto.UserRegistrationDTO;
 import com.webdesk.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -21,11 +22,15 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
 
-    @PutMapping("/{id}")
+    @PutMapping(
+            value = "/{id}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<?> updateUser(@PathVariable Long id,
                                         @RequestPart UserRegistrationDTO registrationDTO,
-                                        @RequestPart MultipartFile profilePicture,
-                                        @RequestPart MultipartFile coverPicture) {
+                                        @RequestPart(required = false) MultipartFile profilePicture,
+                                        @RequestPart(required = false) MultipartFile coverPicture) {
         try {
             UserDTO updatedUser = userService.updateUser(id, registrationDTO, profilePicture, coverPicture);
             return ResponseEntity.ok(updatedUser);
@@ -33,6 +38,8 @@ public class UserController {
             return createErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(@PathVariable Long id) {

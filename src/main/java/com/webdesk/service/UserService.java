@@ -15,4 +15,5 @@ public interface UserService {
     UserDTO getUser(Long id);
     List<UserDTO> getAllUsers();
     JwtResponseDTO verify(UserDTO userDTO);
+    JwtResponseDTO verifyAndRefreshToken(String token);
 }

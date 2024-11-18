@@ -4,6 +4,7 @@ import com.webdesk.dto.JwtResponseDTO;
 import com.webdesk.dto.UserDTO;
 import com.webdesk.dto.UserRegistrationDTO;
 import com.webdesk.entity.User;
+import com.webdesk.exception.UnauthorizedException;
 import com.webdesk.repository.UserRepository;
 import com.webdesk.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +55,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO updateUser(Long id, UserRegistrationDTO registrationDTO, MultipartFile profilePicture, MultipartFile coverPicture) throws IOException {
+    public UserDTO updateUser(Long id, UserRegistrationDTO registrationDTO,
+                              MultipartFile profilePicture, MultipartFile coverPicture) throws IOException {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
@@ -72,14 +74,21 @@ public class UserServiceImpl implements UserService {
 
         user.setEmail(registrationDTO.getEmail());
         user.setBio(registrationDTO.getBio());
-        user.setProfilePictureData(profilePicture.getBytes());
-        user.setProfilePictureType(profilePicture.getContentType());
-        user.setCoverPictureData(coverPicture.getBytes());
-        user.setCoverPictureType(coverPicture.getContentType());
+
+        if (profilePicture != null && !profilePicture.isEmpty()) {
+            user.setProfilePictureData(profilePicture.getBytes());
+            user.setProfilePictureType(profilePicture.getContentType());
+        }
+
+        if (coverPicture != null && !coverPicture.isEmpty()) {
+            user.setCoverPictureData(coverPicture.getBytes());
+            user.setCoverPictureType(coverPicture.getContentType());
+        }
 
         User updatedUser = userRepository.save(user);
         return new UserDTO(updatedUser);
     }
+
 
     @Override
     public UserDTO findByUsername(String username) {
@@ -117,5 +126,31 @@ public class UserServiceImpl implements UserService {
             return new JwtResponseDTO(token, user);
         }
         throw new RuntimeException("Invalid credentials");
+    }
+
+    public JwtResponseDTO verifyAndRefreshToken(String token) {
+        try {
+            if (!jwtService.validateToken(token)) {
+                throw new UnauthorizedException("Invalid token");
+            }
+
+            String username = jwtService.extractUsername(token);
+            UserDTO userDTO = findByUsername(username);
+
+            if (userDTO == null) {
+                throw new UnauthorizedException("User not found");
+            }
+
+            if (jwtService.shouldRefreshToken(token)) {
+                // Generate new token
+                String newToken = jwtService.generateToken(username);
+                return new JwtResponseDTO(newToken, userDTO);
+            }
+
+            return new JwtResponseDTO(token, userDTO);
+
+        } catch (Exception e) {
+            throw new UnauthorizedException("Session verification failed");
+        }
     }
 }

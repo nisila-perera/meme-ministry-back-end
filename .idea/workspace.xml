@@ -5,18 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9204ecd7-e16e-46a0-bbb9-2bc81a7eb31f" name="Changes" comment="Fixed storing profile picture and cover picture in database">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/config/CorsConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/config/WebConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/exception/UnauthorizedException.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/controller/PostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/controller/AuthController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/dto/CommentDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/dto/CommentDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/dto/PostDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/dto/PostDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/service/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/service/impl/JWTService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/service/impl/JWTService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/service/impl/PostServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/service/impl/PostServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/webdesk/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/webdesk/service/impl/UserServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +68,8 @@
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/iCET/student-management-iroshan/student-management&quot;
+    &quot;last_opened_file_path&quot;: &quot;D:/iCET/student-management-iroshan/student-management&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
 }</component>
   <component name="RecentsManager">

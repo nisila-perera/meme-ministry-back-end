@@ -4,6 +4,7 @@ import com.webdesk.dto.JwtResponseDTO;
 import com.webdesk.dto.UserDTO;
 import com.webdesk.dto.UserRegistrationDTO;
 import com.webdesk.service.UserService;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,4 +31,14 @@ public class AuthController {
                                                 @RequestPart MultipartFile coverPicture) throws IOException {
         return new ResponseEntity<>(userService.registerUser(registrationDTO, profilePicture, coverPicture), HttpStatus.CREATED);
     }
+
+    @PostMapping("/verify-session")
+    public ResponseEntity<JwtResponseDTO> verifySession(@RequestBody TokenVerificationRequest token) {
+        return new ResponseEntity<>(userService.verifyAndRefreshToken(token.getToken()), HttpStatus.OK);
+    }
+}
+
+@Data
+class TokenVerificationRequest {
+    private String token;
 }

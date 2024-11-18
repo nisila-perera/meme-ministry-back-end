@@ -25,22 +25,18 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post createPost(MultipartFile image, String caption, Long userId) throws IOException {
-        // Validate input
         if (image == null || image.isEmpty()) {
             throw new IllegalArgumentException("Image file is required");
         }
 
-        // Find user
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        // Validate file type
         String contentType = image.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new IllegalArgumentException("File must be an image");
         }
 
-        // Create new post
         Post post = new Post();
         post.setImageData(FileUtils.compressImage(image.getBytes()));
         post.setImageType(contentType);
@@ -72,7 +68,6 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
     }
 
-    // Add method to get decompressed image data
     public byte[] getPostImage(Long postId) throws IOException {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
@@ -80,7 +75,6 @@ public class PostServiceImpl implements PostService {
         return post.getImageData() != null ? FileUtils.decompressImage(post.getImageData()) : null;
     }
 
-    // Add method to update post
     public Post updatePost(Long postId, MultipartFile newImage, String newCaption) throws IOException {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
