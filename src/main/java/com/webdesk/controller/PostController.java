@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -37,25 +36,19 @@ public class PostController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PostDTO> getPost(@PathVariable Long id) {
-        return postService.getPost(id)
-                .map(post -> ResponseEntity.ok(new PostDTO(post)))
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/user/{userId}/following")
+    public ResponseEntity<List<PostDTO>> getFollowingUserPosts(@PathVariable Long userId) {
+        List<PostDTO> posts = postService.getUserFollowingPosts(userId);
+        return ResponseEntity.ok(posts);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PostDTO>> getUserPosts(@PathVariable Long userId) {
-        List<Post> posts = postService.getUserPosts(userId);
-        List<PostDTO> postDTOs = posts.stream()
-                .map(PostDTO::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(postDTOs);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
-        postService.deletePost(id);
-        return ResponseEntity.noContent().build();
+    @PutMapping("/{postId}")
+    public ResponseEntity<PostDTO> updatePost(
+            @PathVariable Long postId,
+            @RequestParam(required = false) MultipartFile newImage,
+            @RequestParam(required = false) String newCaption) throws IOException {
+        Post updatedPost = postService.updatePost(postId, newImage, newCaption);
+        return ResponseEntity.ok(new PostDTO(updatedPost));
     }
 }
+

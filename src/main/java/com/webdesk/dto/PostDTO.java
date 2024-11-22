@@ -21,7 +21,7 @@ public class PostDTO {
 
     public PostDTO(Post post) {
         this.id = post.getId();
-        this.imageData = post.getImageData();
+        this.imageData = post.getImageData(); // Direct assignment, no decompression
         this.imageType = post.getImageType();
         this.caption = post.getCaption();
         this.createdAt = post.getCreatedAt();

@@ -1,5 +1,6 @@
 package com.webdesk.service;
 
+import com.webdesk.dto.PostDTO;
 import com.webdesk.entity.Post;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -8,8 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostService {
-    Post createPost(MultipartFile image, String caption, Long userId) throws IOException;
-    Optional<Post> getPost(Long id);
-    List<Post> getUserPosts(Long userId);
-    void deletePost(Long id);
+    public Post createPost(MultipartFile image, String caption, Long userId) throws IOException;
+    public List<PostDTO> getUserFollowingPosts(Long userId);
+    public Post updatePost(Long postId, MultipartFile image, String caption) throws IOException;
 }

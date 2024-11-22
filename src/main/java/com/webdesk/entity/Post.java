@@ -19,10 +19,11 @@ public class Post {
     private Long id;
 
     @Lob
-    @Column(length = 1000000)
+    @Column(name = "image_data", columnDefinition = "LONGBLOB")
     private byte[] imageData;
 
     private String imageType;
+
     private String caption;
 
     @Column(nullable = false)
