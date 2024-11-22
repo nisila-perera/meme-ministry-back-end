@@ -20,4 +20,5 @@ public interface UserService {
     List<UserDTO> getFollowing(Long userId);
     JwtResponseDTO verify(UserDTO userDTO);
     JwtResponseDTO verifyAndRefreshToken(String token);
+    void deleteUser(Long userId);
 }

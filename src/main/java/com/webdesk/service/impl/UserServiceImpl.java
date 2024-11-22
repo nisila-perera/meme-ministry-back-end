@@ -8,7 +8,6 @@ import com.webdesk.exception.UnauthorizedException;
 import com.webdesk.repository.UserRepository;
 import com.webdesk.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
-    private final ModelMapper mapper;
     private final UserRepository userRepository;
     private final AuthenticationManager authManager;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -216,5 +214,12 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             throw new UnauthorizedException("Session verification failed");
         }
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        userRepository.delete(user);
     }
 }

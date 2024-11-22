@@ -3,13 +3,11 @@ package com.webdesk.controller;
 import com.webdesk.dto.UserDTO;
 import com.webdesk.dto.UserPrincipal;
 import com.webdesk.dto.UserRegistrationDTO;
-import com.webdesk.entity.User;
 import com.webdesk.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,8 +40,6 @@ public class UserController {
             return createErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
-
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(@PathVariable Long id) {
@@ -115,6 +111,12 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable Long userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.ok().build();
+    }
 
     private ResponseEntity<?> createErrorResponse(String message, HttpStatus status) {
         Map<String, String> response = new HashMap<>();
